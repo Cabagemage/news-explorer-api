@@ -8,9 +8,9 @@ const {
 
 cardsRouter.get('/', getArticles);
 
-cardsRouter.delete('/:articleId', celebrate({
+cardsRouter.delete('/:_articleId', celebrate({
   params: Joi.object().keys({
-    _cardId: Joi.string().hex().required().length(24),
+    _articleId: Joi.string().hex().required().length(24),
   }),
 }), deleteArticle);
 

@@ -17,10 +17,12 @@ module.exports.createUser = (req, res, next) => {
       }
     });
   bcrypt.hash(password, 10).then((hash) => User.create({
+    name: req.body.name,
     email: req.body.email,
     password: hash,
   }).then((user) => {
     res.status(200).send({
+      name: user.name,
       email: user.email,
     });
   })).catch((err) => {

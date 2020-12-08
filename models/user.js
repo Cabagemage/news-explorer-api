@@ -12,7 +12,6 @@ const User = new Schema({
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Жак-Ив-Кусто',
   },
   email: {
     type: String,

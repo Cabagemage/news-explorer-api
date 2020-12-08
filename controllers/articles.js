@@ -14,20 +14,21 @@ module.exports.getArticles = (req, res, next) => {
 };
 
 module.exports.createArticle = (req, res, next) => {
+  const owner = req.user.id;
+
   const {
     keyword, title, text, date, source, link, image,
   } = req.body;
-  const owner = req.user.id;
   Article.create({
     keyword, title, text, date, source, link, image, owner,
   })
-    .then((card) => res.status(200).send(card))
+    .then((article) => res.status(200).send(article))
     .catch((err) => {
       if (err && !title && !link) {
         const error = new BadRequest('С названием и ссылкой на изображение что-то не так');
         next(error);
       } else if (err && !title) {
-        const error = new BadRequest('Введите название карточки');
+        const error = new BadRequest('Введите название');
         next(error);
       } else if (err && !link) {
         const error = new BadRequest('С ссылкой на статью что-то не так');
@@ -38,12 +39,12 @@ module.exports.createArticle = (req, res, next) => {
 
 module.exports.deleteArticle = (req, res, next) => {
   const userId = req.user.id;
-  const { _cardId } = req.params;
-  Article.findById(_cardId)
+  const { _articleId } = req.params;
+  Article.findById(_articleId)
     .populate('owner')
     .then((article) => {
       if (article.owner.id === userId) {
-        Article.findByIdAndDelete(_cardId)
+        Article.findByIdAndDelete(_articleId)
           .then((thisCard) => {
             res.status(200).send(thisCard);
           });
