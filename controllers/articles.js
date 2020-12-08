@@ -1,25 +1,24 @@
-const articleSchema = require('../models/article');
+const Article = require('../models/article');
 const NotFound = require('../utils/Errors/NotFound');
 const BadRequest = require('../utils/Errors/BadRequest');
 const ForbiddenError = require('../utils/Errors/ForbiddenError');
 
-module.exports.getCards = (req, res, next) => {
-  articleSchema.find({})
+module.exports.getArticles = (req, res, next) => {
+  Article.find({})
     .orFail(() => {
-      throw new NotFound({ message: 'Статьи не найдены' });
+      throw new NotFound('Статьи не найдены');
     })
     .then((articles) => {
-      res.send(articles);
-      // ubral {data: articles}
+      res.send({ date: articles });
     }).catch(next);
 };
 
-module.exports.createCard = (req, res, next) => {
+module.exports.createArticle = (req, res, next) => {
   const {
     keyword, title, text, date, source, link, image,
   } = req.body;
   const owner = req.user.id;
-  articleSchema.create({
+  Article.create({
     keyword, title, text, date, source, link, image, owner,
   })
     .then((card) => res.status(200).send(card))
@@ -37,14 +36,14 @@ module.exports.createCard = (req, res, next) => {
     });
 };
 
-module.exports.deleteCard = (req, res, next) => {
+module.exports.deleteArticle = (req, res, next) => {
   const userId = req.user.id;
   const { _cardId } = req.params;
-  articleSchema.findById(_cardId)
+  Article.findById(_cardId)
     .populate('owner')
     .then((article) => {
       if (article.owner.id === userId) {
-        articleSchema.findByIdAndDelete(_cardId)
+        Article.findByIdAndDelete(_cardId)
           .then((thisCard) => {
             res.status(200).send(thisCard);
           });

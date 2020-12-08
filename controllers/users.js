@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const BadRequest = require('../utils/Errors/BadRequest');
 const ConflictError = require('../utils/Errors/ConflictError');
+const NotFound = require('../utils/Errors/NotFound');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -18,19 +19,22 @@ module.exports.createUser = (req, res, next) => {
   bcrypt.hash(password, 10).then((hash) => User.create({
     email: req.body.email,
     password: hash,
-    name: req.body.name,
-    about: req.body.about,
-    avatar: req.body.avatar,
   }).then((user) => {
     res.status(200).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
       email: user.email,
     });
   })).catch((err) => {
     if (err && !email) { const error = new BadRequest('Некорректно введена почта'); next(error); }
   });
+};
+
+module.exports.getOwnerInfo = (req, res, next) => {
+  User.findById(req.user.id)
+    .orFail(() => { throw new NotFound('Пользователь не найден'); })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err) { const error = new BadRequest('Что-то пошло не так'); next(error); }
+    });
 };
 
 module.exports.login = (req, res, next) => {
