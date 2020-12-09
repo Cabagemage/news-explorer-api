@@ -8,16 +8,11 @@ const rateLimit = require('express-rate-limit');
 const router = require('./routes/index.js');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { mongoDBUrl, mongoDBOptions } = require('./utils/configs/config.js');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
-const mongoDBUrl = 'mongodb://localhost:27017/newsdb';
-const mongoDBOptions = {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-};
 app.use(helmet());
 
 app.use(cors());
