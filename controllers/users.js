@@ -34,7 +34,10 @@ module.exports.createUser = (req, res, next) => {
 module.exports.getOwnerInfo = (req, res, next) => {
   User.findById(req.user.id)
     .orFail(() => { throw new NotFound('Пользователь не найден'); })
-    .then((user) => res.send(user))
+    .then((user) => res.send({
+      name: user.name,
+      email: user.email
+    }))
     .catch((err) => {
       if (err) { const error = new BadRequest('Что-то пошло не так'); next(error); }
     });
