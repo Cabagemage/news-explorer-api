@@ -17,7 +17,7 @@ cardsRouter.delete('/:_articleId', celebrate({
 cardsRouter.post('/', celebrate({
   body: Joi.object().keys({
     keyword: Joi.string().required().min(2).max(30),
-    title: Joi.string().required(),
+    title: Joi.string().required().min(3),
     text: Joi.string().required().min(2).max(30),
     date: Joi.string().required(),
     source: Joi.string().required(),

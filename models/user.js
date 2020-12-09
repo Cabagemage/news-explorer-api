@@ -9,7 +9,7 @@ const { Schema } = mongoose;
 const User = new Schema({
   name: {
     type: String,
-    required: false,
+    required: true,
     minlength: 2,
     maxlength: 30,
   },

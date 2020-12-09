@@ -45,8 +45,8 @@ module.exports.deleteArticle = (req, res, next) => {
     .then((article) => {
       if (article.owner.id === userId) {
         Article.findByIdAndDelete(_articleId)
-          .then((thisCard) => {
-            res.status(200).send(thisCard);
+          .then((thisArticle) => {
+            res.status(200).send(thisArticle);
           });
       } else {
         const err = new ForbiddenError('Запрещено удалять новости других пользователей');
@@ -54,9 +54,6 @@ module.exports.deleteArticle = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err) {
-        const error = new NotFound('Новость уже удалена');
-        next(error);
-      }
+      next(err);
     });
 };

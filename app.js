@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Joi, celebrate, errors } = require('celebrate');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const router = require('./routes/index.js');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -16,6 +18,7 @@ const mongoDBOptions = {
   useCreateIndex: true,
   useFindAndModify: false,
 };
+app.use(helmet());
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -30,10 +33,12 @@ app.post('/signin', celebrate({
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(3),
   }),
 }), createUser);
+
 app.use(errors());
 app.use(auth);
 app.use('/', router);
@@ -46,10 +51,16 @@ app.get('/crash-test', () => {
 
 mongoose.connect(mongoDBUrl, mongoDBOptions);
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter);
+
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const { message } = err;
-  console.log(message);
   res.status(statusCode).send({ message });
   next();
 });

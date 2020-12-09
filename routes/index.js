@@ -9,6 +9,7 @@ const userRouter = require('./users.js');
 const articlesRouter = require('./articles.js');
 
 app.use(requestLogger);
+
 router.use('/users', userRouter);
 router.use('/articles', articlesRouter);
 

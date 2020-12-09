@@ -16,6 +16,7 @@ module.exports.createUser = (req, res, next) => {
         const error = new BadRequest('Пароль состоит только из пробелов. Это плохо.'); next(error);
       }
     });
+
   bcrypt.hash(password, 10).then((hash) => User.create({
     name: req.body.name,
     email: req.body.email,
