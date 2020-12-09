@@ -54,6 +54,9 @@ module.exports.deleteArticle = (req, res, next) => {
       }
     })
     .catch((err) => {
-      next(err);
+      if (err) {
+        const error = new NotFound('Карточка уже удалена');
+        next(error);
+      }
     });
 };
