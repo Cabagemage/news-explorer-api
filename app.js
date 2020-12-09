@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Joi, celebrate, errors } = require('celebrate');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+const { limiter } = require('./utils/optional/limiter.js');
 const router = require('./routes/index.js');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -45,11 +45,6 @@ app.get('/crash-test', () => {
 });
 
 mongoose.connect(mongoDBUrl, mongoDBOptions);
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
 
 app.use(limiter);
 
